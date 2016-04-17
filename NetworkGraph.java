@@ -3,7 +3,10 @@
  */
 package assignment13;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.LinkedList;
 
 /**
  * <p>This class represents a graph of flights and airports along with specific
@@ -24,6 +27,8 @@ import java.io.FileNotFoundException;
  */
 public class NetworkGraph {
 
+	LinkedList<AirportVertex> airportGraph;
+	
 	/**
 	 * <p>Constructs a NetworkGraph object and populates it with the information
 	 * contained in the given file. See the sample files or a randomly generated
@@ -43,8 +48,67 @@ public class NetworkGraph {
 	 * this assignment and only if a file is not found.
 	 */
 	public NetworkGraph(String flightInfoPath) throws FileNotFoundException {
-		//TODO: Implement a constructor that reads in the file and stores the information
-		// 		appropriately in this object.
+		airportGraph = new LinkedList<>();
+		
+		BufferedReader br = null;
+		String line = "";
+		String delimiter = ",";
+		String[] separatedLine;
+		String origin, destination, carrier;
+		int delay, cancelled, time, distance;
+		double cost;
+		
+		try {
+			br = new BufferedReader(new FileReader(flightInfoPath));
+			br.readLine();
+			
+			while ((line = br.readLine()) != null) {
+				// Split line into string array delimited by commas
+				separatedLine = line.split(delimiter);
+				
+				// Extract data
+				origin = separatedLine[0];
+				destination = separatedLine[1];
+				carrier = separatedLine[2];
+				delay = Integer.parseInt(separatedLine[3]);
+				cancelled = Integer.parseInt(separatedLine[4]);
+				time = Integer.parseInt(separatedLine[5]);
+				distance = Integer.parseInt(separatedLine[6]);
+				cost = Double.parseDouble(separatedLine[7]);
+				
+				// Create new vertex
+				AirportVertex airport = new AirportVertex(origin);
+				
+				// Only add vertex to graph if it doesn't already exist
+				if(!airportGraph.contains(airport)) {
+					airportGraph.add(airport);
+				} else {
+					// get the airport object to update if it already exists
+					int airportIndex = airportGraph.indexOf(airport);
+					airport = airportGraph.get(airportIndex);
+				}
+
+				AirportVertex newDestination = new AirportVertex(destination);
+				
+				// Create new edge
+				FlightEdge flight = new FlightEdge(airport, newDestination, distance);
+				
+				// Check if flight already exists for that airport
+				if(!airport.containsFlight(flight)) {
+					airport.addFlight(flight);
+				} else {
+					// Get the flight object to update if it already exists
+					flight = airport.getFlight(flight);
+				}
+				
+				// Add new flight data to the flight
+				flight.addFlight(carrier, delay, cancelled, time, cost);
+			}
+			
+			br.close();
+		} catch (Exception e) {
+			throw new FileNotFoundException();
+		}
 	}
 
 	/**
