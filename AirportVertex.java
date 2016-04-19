@@ -2,7 +2,7 @@ package assignment13;
 
 import java.util.LinkedList;
 
-public class AirportVertex {
+public class AirportVertex implements Comparable<AirportVertex>{
 	
 	private boolean visited = false;
 //	private LinkedList<String> carriers = new LinkedList<String>();
@@ -54,7 +54,7 @@ public class AirportVertex {
 		visited = true;
 	}
 	
-	public String getAirport(){
+	public String getAirportName(){
 		return origin;
 	}
 	
@@ -81,6 +81,7 @@ public class AirportVertex {
 	public double getCost() {
 		return cost;
 	}
+	
 
 	/**
 	 * @param cost the cost to set
@@ -91,6 +92,19 @@ public class AirportVertex {
 
 	public AirportVertex getPrevious() {
 		return previous;
+	}
+
+	@Override
+	public int compareTo(AirportVertex o) {
+		
+		if(this.cost - o.getCost()<0){
+			return -1;
+		}
+		else if(this.cost - o.getCost()>0){
+			return 1;
+		}
+		
+		return 0;
 	}
 	
 

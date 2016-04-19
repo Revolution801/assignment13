@@ -24,8 +24,8 @@ public class FindBestPathTester {
 		
 		// Returns the shortest distance path of flights from SFO to DWF when flying with DL
 		// Solution: a path of ['SFO', 'SLC', 'DFW'] and distance of 1588
-		BestPath shortestDistancePath2 = airportGraph.getBestPath("SFO", "DFW", FlightCriteria.DISTANCE, "DL");
-		System.out.println(shortestDistancePath2.toString());
+		//BestPath shortestDistancePath2 = airportGraph.getBestPath("SFO", "DFW", FlightCriteria.DISTANCE, "DL");
+		//System.out.println(shortestDistancePath2.toString());
 		
 		// Returns the shortest flight time path from MOB to SLC
 		// Solution: a path of ['MOB', 'DFW', 'SLC'] and time of ~269.25

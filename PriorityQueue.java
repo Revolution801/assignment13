@@ -2,7 +2,6 @@ package assignment13;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Comparator;
 import java.util.NoSuchElementException;
 
 /**
@@ -12,14 +11,12 @@ import java.util.NoSuchElementException;
  * 
  * @author
  */
-@SuppressWarnings("unchecked")
-public class PriorityQueue<AnyType> {
+public class PriorityQueue {
 	
 	private int currentSize;
 	
-	private AnyType[] array;
+	private AirportVertex[] array;
 	
-	private Comparator<? super AnyType> cmp;
 	
 	/**
 	 * Constructs an empty priority queue. Orders elements according to their
@@ -28,19 +25,12 @@ public class PriorityQueue<AnyType> {
 	 */
 	public PriorityQueue() {
 		currentSize = 0;
-		cmp = null;
-		array = (AnyType[]) new Object[10]; // safe to ignore warning
+		array = (AirportVertex[]) new Object[10]; // safe to ignore warning
 	}
 	
-	/**
-	 * Construct an empty priority queue with a specified comparator. Orders
-	 * elements according to the input Comparator (i.e., AnyType need not be
-	 * Comparable).
-	 */
-	public PriorityQueue(Comparator<? super AnyType> c) {
+	public PriorityQueue(FlightCriteria criteria) {
 		currentSize = 0;
-		cmp = c;
-		array = (AnyType[]) new Object[10]; // safe to ignore warning
+		array = (AirportVertex[]) new Object[10]; // safe to ignore warning
 	}
 	
 	/**
@@ -64,7 +54,7 @@ public class PriorityQueue<AnyType> {
 	 * 
 	 *             (Runs in constant time.)
 	 */
-	public AnyType findMin() throws NoSuchElementException {
+	public AirportVertex findMin() throws NoSuchElementException {
 		if(currentSize == 0) { // Just checks the item count.
 			throw new NoSuchElementException();
 		}
@@ -79,14 +69,14 @@ public class PriorityQueue<AnyType> {
 	 * 
 	 *             (Runs in logarithmic time.)
 	 */
-	public AnyType deleteMin() throws NoSuchElementException {
+	public AirportVertex deleteMin() throws NoSuchElementException {
 		// if the heap is empty, throw a NoSuchElementException
 		if(currentSize == 0) { // Just checks the item count.
 			throw new NoSuchElementException();
 		}
 		
 		// store the minimum item so that it may be returned at the end
-		AnyType deletedMin = array[0];
+		AirportVertex deletedMin = array[0];
 		
 		swap(0, currentSize - 1);
 		
@@ -184,7 +174,7 @@ public class PriorityQueue<AnyType> {
 	 * @param x
 	 *            -- the item to be inserted
 	 */
-	public void add(AnyType x) {
+	public void add(AirportVertex x) {
 		// if the array is full, double its capacity
 		if(currentSize == array.length) {
 			resizeArray();
@@ -206,7 +196,7 @@ public class PriorityQueue<AnyType> {
 	 * 
 	 */
 	private void resizeArray() {
-		AnyType[] newList = (AnyType[]) new Object[currentSize * 2];
+		AirportVertex[] newList = (AirportVertex[]) new Object[currentSize * 2];
 		
 		// Copy items from the old array to the new array.
 		for(int i = 0; i < array.length; i++) {
@@ -254,17 +244,9 @@ public class PriorityQueue<AnyType> {
 	 * the user at construction time, or Comparable, if no Comparator was
 	 * provided.
 	 */
-	private int compare(AnyType lhs, AnyType rhs) {
-		if(cmp == null) {
-			return ((Comparable<? super AnyType>) lhs).compareTo(rhs); // safe
-																		// to
-																		// ignore
-																		// warning
-		}
-		// We won't test your code on non-Comparable types if we didn't supply a
-		// Comparator
+	private int compare(AirportVertex lhs, AirportVertex rhs) {
 		
-		return cmp.compare(lhs, rhs);
+		return lhs.compareTo(rhs);
 	}
 	
 	// LEAVE IN for grading purposes
@@ -312,9 +294,38 @@ public class PriorityQueue<AnyType> {
 	 * @param idx2
 	 */
 	private void swap(int idx1, int idx2) {
-		AnyType temp = array[idx1];
+		AirportVertex temp = array[idx1];
 		array[idx1] = array[idx2];
 		array[idx2] = temp;
 	}
+	
+	public int indexOf(AirportVertex obj) {
+		for (int i = 0; i < array.length; i++) {
+			if(array[i].equals(obj)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	public void remove(int index) throws NoSuchElementException{
+		if(currentSize == 0) { // Just checks the item count.
+			throw new NoSuchElementException();
+		}
+		
+		
+		swap(index, currentSize - 1);
+		
+		array[currentSize - 1] = null;
+		
+		// replace the item at minIndex with the last item in the tree
+		
+		// update size
+		
+		int currentIndex = index;
+		currentSize--;
+		percolateDown(currentIndex);
+	}
+	
 	
 }

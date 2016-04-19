@@ -6,6 +6,7 @@ package assignment13;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 /**
@@ -89,6 +90,13 @@ public class NetworkGraph {
 				}
 
 				AirportVertex newDestination = new AirportVertex(destination);
+				if(!airportGraph.contains(newDestination)) {
+					airportGraph.add(newDestination);
+				} else {
+					// get the airport object to update if it already exists
+					int airportIndex = airportGraph.indexOf(newDestination);
+					newDestination = airportGraph.get(airportIndex);
+				}
 				
 				// Create new edge
 				FlightEdge flight = new FlightEdge(airport, newDestination, distance);
@@ -136,26 +144,61 @@ public class NetworkGraph {
 	 */
 	public BestPath getBestPath(String origin, String destination, FlightCriteria criteria) {
 		
+		PriorityQueue pq = new PriorityQueue();
+		AirportVertex start = airportGraph.get(airportGraph.indexOf(origin));
+		AirportVertex goal = airportGraph.get(airportGraph.indexOf(destination));
+		AirportVertex current;
+		BestPath path = new BestPath();
+			
+			pq.add(start);
 		
+			do {
+				current = pq.deleteMin();
+				
+				if(current.equals(goal)) {
+					return buildPath(start, goal);
+				}
+				
+				current.setAsVisited();
+				
+				for (FlightEdge flight : current.getAllFlights()) {
+					double newCost = flight.getDestination().getCost() + flightCost(flight, criteria);
+					
+					if(flight.getDestination().getCost() > newCost) {
+						pq.remove(pq.indexOf(flight.getDestination()));
+						flight.getDestination().setCost(newCost);
+						flight.getDestination().setPrevious(flight.getOrigin());
+						pq.add(flight.getDestination());
+					}
+					
+				} 
+				
+			} while(pq.size() > 0);
 		return null;
 	}
-
-	private double criteriaSwitch(FlightEdge flight, FlightCriteria criteria) {
-		switch(criteria) {
-			case COST:
-				return flight.getAverageCost();
-			case DELAY:
-				return flight.getAverageDelay();
-			case DISTANCE:
-				return flight.getDistance();
-			case CANCELED:
-				return flight.getCancelledProbability();
-			case TIME:
-				return flight.getAverageTime();
-		}
-		return 0;
-	}
 	
+	private BestPath buildPath(AirportVertex start, AirportVertex goal) {
+		
+		LinkedList<String> link = new LinkedList<>();
+		AirportVertex current = goal;
+		while(current.getPrevious()!=null){
+			link.addFirst(current.getAirportName());
+			current = current.getPrevious();
+		}
+		
+		if(current.equals(start)){
+			link.addFirst(current.getAirportName());
+		}		
+		
+		BestPath best = new BestPath();
+		
+		for (String airport : link) {
+			best.add(airport);
+		}
+		
+		return best;
+	}
+
 	/**
 	 * <p>This overloaded method should do the same as the one above only when looking for paths
 	 * skip the ones that don't match the given airliner.</p>
@@ -179,4 +222,22 @@ public class NetworkGraph {
 		//TODO:
 		return null;
 	}
+	
+	private double flightCost(FlightEdge flight, FlightCriteria criteria) {
+		switch(criteria) {
+			case COST:
+				return flight.getAverageCost();
+			case DELAY:
+				return flight.getAverageDelay();
+			case DISTANCE:
+				return flight.getDistance();
+			case CANCELED:
+				return flight.getCancelledProbability();
+			case TIME:
+				return flight.getAverageTime();
+		}
+		return 0;
+	}
+
 }
+

@@ -30,6 +30,18 @@ public class BestPath {
 	 */
 	private double pathLength;
 
+	public BestPath(){
+		path = new ArrayList<>();
+	}
+	
+	public void add(String str){
+		path.add(str);
+	}
+	
+	public void setLength(double length) {
+		pathLength = length;
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof BestPath) {
