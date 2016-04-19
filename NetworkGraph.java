@@ -135,24 +135,25 @@ public class NetworkGraph {
 	 * and everything in between.
 	 */
 	public BestPath getBestPath(String origin, String destination, FlightCriteria criteria) {
+		
+		
+		return null;
+	}
+
+	private double criteriaSwitch(FlightEdge flight, FlightCriteria criteria) {
 		switch(criteria) {
 			case COST:
-				
-				break;
+				return flight.getAverageCost();
 			case DELAY:
-				
-				break;
+				return flight.getAverageDelay();
 			case DISTANCE:
-				
-				break;
+				return flight.getDistance();
 			case CANCELED:
-				
-				break;
+				return flight.getCancelledProbability();
 			case TIME:
-				
-				break;
+				return flight.getAverageTime();
 		}
-		return null;
+		return 0;
 	}
 	
 	/**
