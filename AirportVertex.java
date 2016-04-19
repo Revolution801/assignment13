@@ -88,6 +88,10 @@ public class AirportVertex {
 	public void setCost(double _cost) {
 		cost = _cost;
 	}
+
+	public AirportVertex getPrevious() {
+		return previous;
+	}
 	
 
 }
