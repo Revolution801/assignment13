@@ -37,7 +37,7 @@ public class GenerateFlightData {
 	// ONLY EDIT THESE THREE VARIABLES
 	private static int edgeCount = 15;
 	private static int nodeCount = 5;
-	private static String filePath = "testfile.csv";
+	private static String filePath = "simpleAirportData.csv";
 
 	// EDITING ANYTHING BELOW THIS MAY SCREW UP MY CODE SO DO SO AT YOUR OWN RISK.
 	// BTW I do not care if you do I just wont be able to tell you why your broke it

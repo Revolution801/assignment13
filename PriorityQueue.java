@@ -25,12 +25,12 @@ public class PriorityQueue {
 	 */
 	public PriorityQueue() {
 		currentSize = 0;
-		array = (AirportVertex[]) new Object[10]; // safe to ignore warning
+		array = new AirportVertex[10]; // safe to ignore warning
 	}
 	
 	public PriorityQueue(FlightCriteria criteria) {
 		currentSize = 0;
-		array = (AirportVertex[]) new Object[10]; // safe to ignore warning
+		array = new AirportVertex[10]; // safe to ignore warning
 	}
 	
 	/**
@@ -103,7 +103,8 @@ public class PriorityQueue {
 		int rightChildIndex = rightChildIndex(currentIndex);
 		int minIndex;
 		
-		if(array[leftChildIndex] == null && array[rightChildIndex] == null) {
+		if(leftChildIndex > currentSize || rightChildIndex > currentSize 
+				|| (array[leftChildIndex] == null && array[rightChildIndex] == null)) {
 			return;
 		}
 		
@@ -196,7 +197,7 @@ public class PriorityQueue {
 	 * 
 	 */
 	private void resizeArray() {
-		AirportVertex[] newList = (AirportVertex[]) new Object[currentSize * 2];
+		AirportVertex[] newList = new AirportVertex[currentSize * 2];
 		
 		// Copy items from the old array to the new array.
 		for(int i = 0; i < array.length; i++) {
@@ -327,5 +328,12 @@ public class PriorityQueue {
 		percolateDown(currentIndex);
 	}
 	
-	
+	public AirportVertex get(AirportVertex airport){
+		for(int idx = 0; idx < currentSize; idx++) {
+			if(array[idx].equals(airport)) {
+				return array[idx];
+			}
+		}
+		return null;
+	}
 }

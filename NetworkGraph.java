@@ -159,8 +159,8 @@ public class NetworkGraph {
 	public BestPath getBestPath(String origin, String destination, FlightCriteria criteria) {
 		
 		PriorityQueue pq = new PriorityQueue();
-		AirportVertex start = airportGraph.get(airportGraph.indexOf(origin));
-		AirportVertex goal = airportGraph.get(airportGraph.indexOf(destination));
+		AirportVertex start = airportGraph.get(airportGraph.indexOf(new AirportVertex(origin)));
+		AirportVertex goal = airportGraph.get(airportGraph.indexOf(new AirportVertex(destination)));
 		AirportVertex current;
 		
 	start.setCost(0);
@@ -179,8 +179,11 @@ public class NetworkGraph {
 				if(!flight.getDestination().isVisited()) {
 					double newCost = flight.getOrigin().getCost() + flightCost(flight, criteria);
 					if(flight.getDestination().getCost() > newCost) {
-						pq.remove(pq.indexOf(flight.getDestination()));
-						flight.getDestination().setCost(newCost);
+						if(pq.size() > 0 && pq.get(flight.getDestination()) != null) {
+							pq.remove(pq.indexOf(flight.getDestination()));
+						}
+						
+						flight.getDestination().setCost(newCost);						
 						flight.getDestination().setPrevious(flight.getOrigin());
 						pq.add(flight.getDestination());
 					}
@@ -188,30 +191,9 @@ public class NetworkGraph {
 			}
 			
 		} while(pq.size() > 0);
-		return null;
+		return buildPath(start, goal);
 	}
 	
-	private BestPath buildPath(AirportVertex start, AirportVertex goal) {
-		
-		LinkedList<String> link = new LinkedList<>();
-		AirportVertex current = goal;
-		while(current.getPrevious() != null) {
-			link.addFirst(current.getAirportName());
-			current = current.getPrevious();
-		}
-		
-		if(current.equals(start)) {
-			link.addFirst(current.getAirportName());
-		}
-		
-		BestPath best = new BestPath();
-		
-		for(String airport : link) {
-			best.add(airport);
-		}
-		
-		return best;
-	}
 	
 	/**
 	 * <p>
@@ -240,10 +222,81 @@ public class NetworkGraph {
 	 *         destination, and everything in between.
 	 */
 	public BestPath getBestPath(String origin, String destination, FlightCriteria criteria, String airliner) {
-		// TODO:
-		return null;
+		PriorityQueue pq = new PriorityQueue();
+		AirportVertex start = airportGraph.get(airportGraph.indexOf(new AirportVertex(origin)));
+		AirportVertex goal = airportGraph.get(airportGraph.indexOf(new AirportVertex(destination)));
+		AirportVertex current;
+		
+	start.setCost(0);
+		pq.add(start);
+		
+		do {
+			current = pq.deleteMin();
+			
+			if(current.equals(goal)) {
+				return buildPath(start, goal);
+			}
+			
+			current.setAsVisited();
+			
+			for(FlightEdge flight : current.getAllFlightsCarrierSpecific(airliner)) {
+				if(!flight.getDestination().isVisited()) {
+					double newCost = flight.getOrigin().getCost() + flightCost(flight, criteria);
+					if(flight.getDestination().getCost() > newCost) {
+						if(pq.size() > 0 && pq.get(flight.getDestination()) != null) {
+							pq.remove(pq.indexOf(flight.getDestination()));
+						}
+						
+						flight.getDestination().setCost(newCost);						
+						flight.getDestination().setPrevious(flight.getOrigin());
+						pq.add(flight.getDestination());
+					}
+				}
+			}
+			
+		} while(pq.size() > 0);
+		
+		return buildPath(start, goal);
 	}
 	
+	private BestPath buildPath(AirportVertex start, AirportVertex goal) {
+		
+		LinkedList<String> link = new LinkedList<>();
+		AirportVertex current = goal;
+		BestPath best = new BestPath();
+		
+		if(goal.getPrevious() == null) {
+			resetAirports();
+			return best;
+		}
+		
+		while(current.getPrevious() != null) {
+			link.addFirst(current.getAirportName());
+			current = current.getPrevious();
+		}
+		
+		if(current.equals(start)) {
+			link.addFirst(current.getAirportName());
+		}
+		
+		best.setLength( Math.round(goal.getCost() * 100) / 100.0);
+		
+		for(String airport : link) {
+			best.add(airport);
+		}
+		
+		resetAirports();
+		return best;
+	}
+
+	private void resetAirports() {
+		for(AirportVertex airport : airportGraph) {
+			airport.setPrevious(null);
+			airport.setAsUnvisited();
+			airport.setCost(Double.MAX_VALUE);
+		}
+	}
+
 	private double flightCost(FlightEdge flight, FlightCriteria criteria) {
 		switch(criteria) {
 			case COST:

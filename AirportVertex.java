@@ -5,7 +5,6 @@ import java.util.LinkedList;
 public class AirportVertex implements Comparable<AirportVertex>{
 	
 	private boolean visited = false;
-	private LinkedList<String> carriers = new LinkedList<String>();
 	private String origin = "";
 	private LinkedList<FlightEdge> flights = new LinkedList<>();
 	private AirportVertex previous = null;
@@ -40,10 +39,16 @@ public class AirportVertex implements Comparable<AirportVertex>{
 		return flights;
 	}
 	
-	public void addCarrier(String carrier){
-		if(!carriers.contains(carrier)){
-			carriers.add(carrier);
+	public LinkedList<FlightEdge> getAllFlightsCarrierSpecific(String carrier){
+		
+		LinkedList<FlightEdge> carrierFlights = new LinkedList<>();
+		
+		for(FlightEdge element : flights) {
+			if(element.isCarrierOffered(carrier)){
+				carrierFlights.add(element);
+			}
 		}
+		return carrierFlights;
 	}
 	
 	public boolean isVisited(){
@@ -54,12 +59,12 @@ public class AirportVertex implements Comparable<AirportVertex>{
 		visited = true;
 	}
 	
-	public String getAirportName(){
-		return origin;
+	public void setAsUnvisited() {
+		visited = false;
 	}
 	
-	public boolean isCarrierOffered(String _carrier){
-		return carriers.contains(_carrier);
+	public String getAirportName(){
+		return origin;
 	}
 	
 	@Override
