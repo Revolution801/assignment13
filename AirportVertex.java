@@ -5,7 +5,7 @@ import java.util.LinkedList;
 public class AirportVertex implements Comparable<AirportVertex>{
 	
 	private boolean visited = false;
-//	private LinkedList<String> carriers = new LinkedList<String>();
+	private LinkedList<String> carriers = new LinkedList<String>();
 	private String origin = "";
 	private LinkedList<FlightEdge> flights = new LinkedList<>();
 	private AirportVertex previous = null;
@@ -13,7 +13,7 @@ public class AirportVertex implements Comparable<AirportVertex>{
 	
 	public AirportVertex(String airport){
 		origin = airport;
-		cost = 0;
+		cost = Double.MAX_VALUE;
 	}
 	
 	public void addFlight(FlightEdge flight) {
@@ -40,11 +40,11 @@ public class AirportVertex implements Comparable<AirportVertex>{
 		return flights;
 	}
 	
-//	public void addCarrier(String carrier){
-//		if(!carriers.contains(carrier)){
-//			carriers.add(carrier);
-//		}
-//	}
+	public void addCarrier(String carrier){
+		if(!carriers.contains(carrier)){
+			carriers.add(carrier);
+		}
+	}
 	
 	public boolean isVisited(){
 		return visited;
@@ -58,9 +58,9 @@ public class AirportVertex implements Comparable<AirportVertex>{
 		return origin;
 	}
 	
-//	public boolean isCarrierOffered(String _carrier){
-//		return carriers.contains(_carrier);
-//	}
+	public boolean isCarrierOffered(String _carrier){
+		return carriers.contains(_carrier);
+	}
 	
 	@Override
 	public boolean equals(Object _other) {

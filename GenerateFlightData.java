@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.SortedSet;
 
 /**
  * <p>This class will generate random flights for you to test. If you want to make
@@ -101,7 +100,7 @@ public class GenerateFlightData {
 		System.out.println("NodeCount: " + nodeCount + "\nEdgeCount: " + edgeCount + "\nFilePath: " + System.getProperty("user.dir") + "\\" + filePath);
 	}
 
-	private static int generateActualFlightTime(int estimatedFlightTime) {
+	public static int generateActualFlightTime(int estimatedFlightTime) {
 		int plusOrMinusTime = r.nextInt(50);
 		return estimatedFlightTime + (r.nextBoolean() ? - plusOrMinusTime : + plusOrMinusTime) ;
 	}
