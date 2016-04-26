@@ -28,6 +28,10 @@ public class PriorityQueue {
 		array = new AirportVertex[10]; // safe to ignore warning
 	}
 	
+	/**
+	 * 
+	 * @param criteria
+	 */
 	public PriorityQueue(FlightCriteria criteria) {
 		currentSize = 0;
 		array = new AirportVertex[10]; // safe to ignore warning

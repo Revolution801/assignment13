@@ -176,18 +176,7 @@ public class NetworkGraph {
 			current.setAsVisited();
 			
 			for(FlightEdge flight : current.getAllFlights()) {
-				if(!flight.getDestination().isVisited()) {
-					double newCost = flight.getOrigin().getCost() + flightCost(flight, criteria);
-					if(flight.getDestination().getCost() > newCost) {
-						if(pq.size() > 0 && pq.get(flight.getDestination()) != null) {
-							pq.remove(pq.indexOf(flight.getDestination()));
-						}
-						
-						flight.getDestination().setCost(newCost);						
-						flight.getDestination().setPrevious(flight.getOrigin());
-						pq.add(flight.getDestination());
-					}
-				}
+				newCostAndReQueueIfNotVisited(criteria, pq, flight);
 			}
 			
 		} while(pq.size() > 0);
@@ -240,23 +229,50 @@ public class NetworkGraph {
 			current.setAsVisited();
 			
 			for(FlightEdge flight : current.getAllFlightsCarrierSpecific(airliner)) {
-				if(!flight.getDestination().isVisited()) {
-					double newCost = flight.getOrigin().getCost() + flightCost(flight, criteria);
-					if(flight.getDestination().getCost() > newCost) {
-						if(pq.size() > 0 && pq.get(flight.getDestination()) != null) {
-							pq.remove(pq.indexOf(flight.getDestination()));
-						}
-						
-						flight.getDestination().setCost(newCost);						
-						flight.getDestination().setPrevious(flight.getOrigin());
-						pq.add(flight.getDestination());
-					}
-				}
+				newCostAndReQueueIfNotVisited(criteria, pq, flight);
 			}
 			
 		} while(pq.size() > 0);
 		
 		return buildPath(start, goal);
+	}
+
+	/**
+	 * @param criteria
+	 * @param pq
+	 * @param flight
+	 */
+	private void newCostAndReQueueIfNotVisited(FlightCriteria criteria, PriorityQueue pq, FlightEdge flight) {
+		if(!flight.getDestination().isVisited()) {
+			double newCost = flight.getOrigin().getCost() + flightCost(flight, criteria);
+			if(isNewCostGreater(flight, newCost)) {
+				if(isDestinationInQueue(pq, flight)) {
+					pq.remove(pq.indexOf(flight.getDestination()));
+				}
+				
+				flight.getDestination().setCost(newCost);						
+				flight.getDestination().setPrevious(flight.getOrigin());
+				pq.add(flight.getDestination());
+			}
+		}
+	}
+
+	/**
+	 * @param pq
+	 * @param flight
+	 * @return
+	 */
+	private boolean isDestinationInQueue(PriorityQueue pq, FlightEdge flight) {
+		return pq.size() > 0 && pq.get(flight.getDestination()) != null;
+	}
+
+	/**
+	 * @param flight
+	 * @param newCost
+	 * @return
+	 */
+	private boolean isNewCostGreater(FlightEdge flight, double newCost) {
+		return flight.getDestination().getCost() > newCost;
 	}
 	
 	private BestPath buildPath(AirportVertex start, AirportVertex goal) {
