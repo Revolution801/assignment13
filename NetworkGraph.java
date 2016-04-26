@@ -113,9 +113,8 @@ public class NetworkGraph {
 				FlightEdge flight = new FlightEdge(airport, newDestination, distance);
 				
 				// Check if flight already exists for that airport
-				if(!airport.containsFlight(flight)) {
-					airport.addFlight(flight);
-				} else {
+				if(airport.addFlight(flight)) {}
+				else {
 					// Get the flight object to update if it already exists
 					flight = airport.getFlight(flight);
 				}
