@@ -1,6 +1,3 @@
-/**
- * 
- */
 package assignment13;
 
 import java.io.BufferedReader;
@@ -29,7 +26,7 @@ import java.util.LinkedList;
  * to completed the task at hand
  * </p>
  * 
- * @author CS2420 Teaching Staff - Spring 2016
+ * @author CS2420 Teaching Staff - Spring 2016, Kent Allen, Alec Becker
  */
 public class NetworkGraph {
 	
@@ -100,6 +97,7 @@ public class NetworkGraph {
 					airport = airportGraph.get(airportIndex);
 				}
 				
+				// Only add the airport to the graph if it doesn't already exist
 				AirportVertex newDestination = new AirportVertex(destination);
 				if(!airportGraph.contains(newDestination)) {
 					airportGraph.add(newDestination);
@@ -113,8 +111,8 @@ public class NetworkGraph {
 				FlightEdge flight = new FlightEdge(airport, newDestination, distance);
 				
 				// Check if flight already exists for that airport
-				if(airport.addFlight(flight)) {}
-				else {
+				if(airport.addFlight(flight)) {
+				} else {
 					// Get the flight object to update if it already exists
 					flight = airport.getFlight(flight);
 				}
@@ -162,7 +160,7 @@ public class NetworkGraph {
 		AirportVertex goal = airportGraph.get(airportGraph.indexOf(new AirportVertex(destination)));
 		AirportVertex current;
 		
-	start.setCost(0);
+		start.setCost(0);
 		pq.add(start);
 		
 		do {
@@ -175,13 +173,13 @@ public class NetworkGraph {
 			current.setAsVisited();
 			
 			for(FlightEdge flight : current.getAllFlights()) {
-				newCostAndReQueueIfNotVisited(criteria, pq, flight);
+				newCostAndAddToQueueIfNotVisited(criteria, pq, flight);
 			}
 			
 		} while(pq.size() > 0);
+		
 		return buildPath(start, goal);
 	}
-	
 	
 	/**
 	 * <p>
@@ -215,7 +213,7 @@ public class NetworkGraph {
 		AirportVertex goal = airportGraph.get(airportGraph.indexOf(new AirportVertex(destination)));
 		AirportVertex current;
 		
-	start.setCost(0);
+		start.setCost(0);
 		pq.add(start);
 		
 		do {
@@ -228,20 +226,25 @@ public class NetworkGraph {
 			current.setAsVisited();
 			
 			for(FlightEdge flight : current.getAllFlightsCarrierSpecific(airliner)) {
-				newCostAndReQueueIfNotVisited(criteria, pq, flight);
+				newCostAndAddToQueueIfNotVisited(criteria, pq, flight);
 			}
 			
 		} while(pq.size() > 0);
 		
 		return buildPath(start, goal);
 	}
-
+	
 	/**
+	 * This method checks if the current flight has been visited. If not, it
+	 * checks if the new cost is cheaper than the current cost to the
+	 * destination. If so, it removes that item from the queue and than updates
+	 * its cost.
+	 * 
 	 * @param criteria
 	 * @param pq
 	 * @param flight
 	 */
-	private void newCostAndReQueueIfNotVisited(FlightCriteria criteria, PriorityQueue pq, FlightEdge flight) {
+	private void newCostAndAddToQueueIfNotVisited(FlightCriteria criteria, PriorityQueue pq, FlightEdge flight) {
 		if(!flight.getDestination().isVisited()) {
 			double newCost = flight.getOrigin().getCost() + flightCost(flight, criteria);
 			if(isNewCostGreater(flight, newCost)) {
@@ -249,13 +252,13 @@ public class NetworkGraph {
 					pq.remove(pq.indexOf(flight.getDestination()));
 				}
 				
-				flight.getDestination().setCost(newCost);						
+				flight.getDestination().setCost(newCost);
 				flight.getDestination().setPrevious(flight.getOrigin());
 				pq.add(flight.getDestination());
 			}
 		}
 	}
-
+	
 	/**
 	 * @param pq
 	 * @param flight
@@ -264,7 +267,7 @@ public class NetworkGraph {
 	private boolean isDestinationInQueue(PriorityQueue pq, FlightEdge flight) {
 		return pq.size() > 0 && pq.get(flight.getDestination()) != null;
 	}
-
+	
 	/**
 	 * @param flight
 	 * @param newCost
@@ -294,7 +297,7 @@ public class NetworkGraph {
 			link.addFirst(current.getAirportName());
 		}
 		
-		best.setLength( Math.round(goal.getCost() * 100) / 100.0);
+		best.setLength(Math.round(goal.getCost() * 100) / 100.0);
 		
 		for(String airport : link) {
 			best.add(airport);
@@ -303,7 +306,7 @@ public class NetworkGraph {
 		resetAirports();
 		return best;
 	}
-
+	
 	private void resetAirports() {
 		for(AirportVertex airport : airportGraph) {
 			airport.setPrevious(null);
@@ -311,7 +314,7 @@ public class NetworkGraph {
 			airport.setCost(Double.MAX_VALUE);
 		}
 	}
-
+	
 	private double flightCost(FlightEdge flight, FlightCriteria criteria) {
 		switch(criteria) {
 			case COST:
