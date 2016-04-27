@@ -5,11 +5,11 @@ import java.io.PrintWriter;
 import java.util.NoSuchElementException;
 
 /**
- * Represents a priority queue of generically-typed items. The queue is
- * implemented as a min heap. The min heap is implemented implicitly as an
+ * Represents a priority queue to be used in our NetworkGraph class. The queue
+ * is implemented as a min heap. The min heap is implemented implicitly as an
  * array.
  * 
- * @author
+ * @author Kent Allen, Alec Becker
  */
 public class PriorityQueue {
 	
@@ -17,22 +17,12 @@ public class PriorityQueue {
 	
 	private AirportVertex[] array;
 	
-	
 	/**
 	 * Constructs an empty priority queue. Orders elements according to their
 	 * natural ordering (i.e., AnyType is expected to be Comparable) AnyType is
 	 * not forced to be Comparable.
 	 */
 	public PriorityQueue() {
-		currentSize = 0;
-		array = new AirportVertex[10]; // safe to ignore warning
-	}
-	
-	/**
-	 * 
-	 * @param criteria
-	 */
-	public PriorityQueue(FlightCriteria criteria) {
 		currentSize = 0;
 		array = new AirportVertex[10]; // safe to ignore warning
 	}
@@ -99,16 +89,17 @@ public class PriorityQueue {
 	}
 	
 	/**
+	 * Percolates the item down until heap order is restored
 	 * 
 	 * @param currentIndex
+	 *            - Index of the item to be percolated down
 	 */
 	private void percolateDown(int currentIndex) {
 		int leftChildIndex = leftChildIndex(currentIndex);
 		int rightChildIndex = rightChildIndex(currentIndex);
 		int minIndex;
 		
-		if(leftChildIndex > currentSize || rightChildIndex > currentSize 
-				|| (array[leftChildIndex] == null && array[rightChildIndex] == null)) {
+		if(leftChildIndex > currentSize || rightChildIndex > currentSize || (array[leftChildIndex] == null && array[rightChildIndex] == null)) {
 			return;
 		}
 		
@@ -137,10 +128,11 @@ public class PriorityQueue {
 	}
 	
 	/**
+	 * Checks if the children are null and returns the appropriate index.
 	 * 
 	 * @param leftChildIndex
 	 * @param rightChildIndex
-	 * @return
+	 * @return - The index of the smaller child
 	 */
 	private int childNullCheck(int leftChildIndex, int rightChildIndex) {
 		int minIndex = 0;
@@ -155,10 +147,14 @@ public class PriorityQueue {
 	}
 	
 	/**
+	 * Returns the smaller of the two children. If one child is null the other
+	 * is the minimum.
 	 * 
 	 * @param leftChildIndex
+	 *            - Index of the right child
 	 * @param rightChildIndex
-	 * @return
+	 *            - Index of the left child
+	 * @return - The index of the minimum child
 	 */
 	private int findMinOfChildren(int leftChildIndex, int rightChildIndex) {
 		int minIndex;
@@ -198,7 +194,7 @@ public class PriorityQueue {
 	}
 	
 	/**
-	 * 
+	 * Doubles the size of the backing array
 	 */
 	private void resizeArray() {
 		AirportVertex[] newList = new AirportVertex[currentSize * 2];
@@ -212,8 +208,10 @@ public class PriorityQueue {
 	}
 	
 	/**
+	 * Percolates the newly added item up until heap order is restored
 	 * 
 	 * @param currentIndex
+	 *            - Index of the newly added item
 	 */
 	private void percolateUp(int currentIndex) {
 		int parentIndex = findParent(currentIndex);
@@ -294,9 +292,12 @@ public class PriorityQueue {
 	}
 	
 	/**
+	 * Swaps two items in the backed array
 	 * 
 	 * @param idx1
+	 *            - Index of the first item
 	 * @param idx2
+	 *            - Index of the second item
 	 */
 	private void swap(int idx1, int idx2) {
 		AirportVertex temp = array[idx1];
@@ -304,8 +305,14 @@ public class PriorityQueue {
 		array[idx2] = temp;
 	}
 	
+	/**
+	 * Returns the index of the object if it is in the queue, -1 otherwise
+	 * 
+	 * @param obj
+	 * @return
+	 */
 	public int indexOf(AirportVertex obj) {
-		for (int i = 0; i < array.length; i++) {
+		for(int i = 0; i < array.length; i++) {
 			if(array[i].equals(obj)) {
 				return i;
 			}
@@ -313,11 +320,16 @@ public class PriorityQueue {
 		return -1;
 	}
 	
-	public void remove(int index) throws NoSuchElementException{
+	/**
+	 * Removes the specified object from the queue if it exists
+	 * 
+	 * @param index
+	 * @throws NoSuchElementException
+	 */
+	public void remove(int index) throws NoSuchElementException {
 		if(currentSize == 0) { // Just checks the item count.
 			throw new NoSuchElementException();
 		}
-		
 		
 		swap(index, currentSize - 1);
 		
@@ -332,7 +344,14 @@ public class PriorityQueue {
 		percolateDown(currentIndex);
 	}
 	
-	public AirportVertex get(AirportVertex airport){
+	/**
+	 * Returns the item if it is in the queue, null if it does not exist in the
+	 * queue.
+	 * 
+	 * @param airport
+	 * @return
+	 */
+	public AirportVertex get(AirportVertex airport) {
 		for(int idx = 0; idx < currentSize; idx++) {
 			if(array[idx].equals(airport)) {
 				return array[idx];
