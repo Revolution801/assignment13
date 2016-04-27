@@ -78,4 +78,14 @@ public class NetworkGraphJunit {
 			
 			assertTrue(shouldBe.equals(actuallyIs));
 	}
+	
+	@Test
+	public void noDestinationsCarrierSpecified() {
+			BestPath shouldBe = new BestPath();
+			BestPath actuallyIs = new BestPath();
+			
+			actuallyIs = graph.getBestPath("SAN", "SFO", FlightCriteria.COST, "UA");
+			
+			assertTrue(shouldBe.equals(actuallyIs));
+	}
 }
