@@ -19,7 +19,7 @@ public class FlightEdge {
 	private int distance = 0;
 	private double cancelledProbability = 0;
 	private double averageDelay = 0;
-	private int numFlights = 0;
+	private int numTime, numCost, numDelay, numCancelled = 0;
 	
 	/**
 	 * Constructor for FlightEdge. Origin, destination, and distance are set
@@ -58,11 +58,31 @@ public class FlightEdge {
 			carriers.add(carrier);
 		}
 		
-		averageDelay = ((averageDelay * numFlights) + delay) / (numFlights + 1);
-		averageTime = ((averageTime * numFlights) + _time) / (numFlights + 1);
-		averageCost = ((averageCost * numFlights) + _cost) / (numFlights + 1);
-		cancelledProbability = ((cancelledProbability * numFlights) + cancelled) / (numFlights + 1);
-		numFlights++;
+		// If any of the following data is negative, set the value to -1 to
+		// catch in NetworkGraph
+		if(delay >= 0) {
+			averageDelay = ((averageDelay * numDelay) + delay) / (++numDelay);
+		} else {
+			averageDelay = -1;
+		}
+		
+		if(_time >= 0) {
+			averageTime = ((averageTime * numTime) + _time) / (++numTime);
+		} else {
+			averageTime = -1;
+		}
+		
+		if(_cost >= 0) {
+			averageCost = ((averageCost * numCost) + _cost) / (++numCost);
+		} else {
+			averageCost = -1;
+		}
+		
+		if(cancelled >= 0) {
+			cancelledProbability = ((cancelledProbability * numCancelled) + cancelled) / (++numCancelled);
+		} else {
+			cancelledProbability = -1;
+		}
 	}
 	
 	/**

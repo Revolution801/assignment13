@@ -78,4 +78,19 @@ public class NetworkGraphJunit {
 			
 			assertTrue(shouldBe.equals(actuallyIs));
 	}
+	
+	@Test
+	public void shortPathTestNegativeValues() {
+			BestPath shouldBe = new BestPath();
+			BestPath actuallyIs = new BestPath();
+			
+			shouldBe.add("ODC");
+			shouldBe.add("PGH");
+			shouldBe.add("IHE");
+			shouldBe.setLength(432);
+			
+			actuallyIs = graph.getBestPath("ODC", "IHE", FlightCriteria.TIME);
+
+			assertTrue(shouldBe.equals(actuallyIs));
+	}
 }

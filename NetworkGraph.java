@@ -85,7 +85,7 @@ public class NetworkGraph {
 				distance = Integer.parseInt(separatedLine[6]);
 				cost = Double.parseDouble(separatedLine[7]);
 				
-				// Create new vertex
+				// Create new origin vertex
 				AirportVertex airport = new AirportVertex(origin);
 				
 				// Only add vertex to graph if it doesn't already exist
@@ -97,8 +97,10 @@ public class NetworkGraph {
 					airport = airportGraph.get(airportIndex);
 				}
 				
-				// Only add the airport to the graph if it doesn't already exist
+				// Create new destination vertex
 				AirportVertex newDestination = new AirportVertex(destination);
+
+				// Only add the airport to the graph if it doesn't already exist
 				if(!airportGraph.contains(newDestination)) {
 					airportGraph.add(newDestination);
 				} else {
@@ -246,15 +248,17 @@ public class NetworkGraph {
 	 */
 	private void newCostAndAddToQueueIfNotVisited(FlightCriteria criteria, PriorityQueue pq, FlightEdge flight) {
 		if(!flight.getDestination().isVisited()) {
-			double newCost = flight.getOrigin().getCost() + flightCost(flight, criteria);
-			if(isNewCostGreater(flight, newCost)) {
-				if(isDestinationInQueue(pq, flight)) {
-					pq.remove(pq.indexOf(flight.getDestination()));
+			if(flightCost(flight, criteria) != -1) {
+				double newCost = flight.getOrigin().getCost() + flightCost(flight, criteria);
+				if(isNewCostGreater(flight, newCost)) {
+					if(isDestinationInQueue(pq, flight)) {
+						pq.remove(pq.indexOf(flight.getDestination()));
+					}
+					
+					flight.getDestination().setCost(newCost);
+					flight.getDestination().setPrevious(flight.getOrigin());
+					pq.add(flight.getDestination());
 				}
-				
-				flight.getDestination().setCost(newCost);
-				flight.getDestination().setPrevious(flight.getOrigin());
-				pq.add(flight.getDestination());
 			}
 		}
 	}
