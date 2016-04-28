@@ -93,7 +93,7 @@ public class NetworkGraphJunit {
 
 			assertTrue(shouldBe.equals(actuallyIs));
 	}
-}
+
 
 	public void noDestinationsCarrierSpecified() {
 			BestPath shouldBe = new BestPath();
