@@ -157,9 +157,16 @@ public class NetworkGraph {
 	 */
 	public BestPath getBestPath(String origin, String destination, FlightCriteria criteria) {
 		
+		int startIndex = airportGraph.indexOf(new AirportVertex(origin));
+		int goalIndex = airportGraph.indexOf(new AirportVertex(destination));
+		
+		if(startIndex == -1 || goalIndex == -1){
+			return new BestPath();
+		}
+		
 		PriorityQueue pq = new PriorityQueue();
-		AirportVertex start = airportGraph.get(airportGraph.indexOf(new AirportVertex(origin)));
-		AirportVertex goal = airportGraph.get(airportGraph.indexOf(new AirportVertex(destination)));
+		AirportVertex start = airportGraph.get(startIndex);
+		AirportVertex goal = airportGraph.get(goalIndex);
 		AirportVertex current;
 		
 		start.setCost(0);
@@ -211,8 +218,15 @@ public class NetworkGraph {
 	 */
 	public BestPath getBestPath(String origin, String destination, FlightCriteria criteria, String airliner) {
 		PriorityQueue pq = new PriorityQueue();
-		AirportVertex start = airportGraph.get(airportGraph.indexOf(new AirportVertex(origin)));
-		AirportVertex goal = airportGraph.get(airportGraph.indexOf(new AirportVertex(destination)));
+		int startIndex = airportGraph.indexOf(new AirportVertex(origin));
+		int goalIndex = airportGraph.indexOf(new AirportVertex(destination));
+		
+		if(startIndex == -1 || goalIndex == -1){
+			return new BestPath();
+		}
+		
+		AirportVertex start = airportGraph.get(startIndex);
+		AirportVertex goal = airportGraph.get(goalIndex);
 		AirportVertex current;
 		
 		start.setCost(0);
@@ -263,23 +277,30 @@ public class NetworkGraph {
 		}
 	}
 	
-	/**
-	 * @param pq
-	 * @param flight
-	 * @return
+	/**Boolean if statement to check if FlightEdge is in the priority queue
+	 * @param pq - priority queue
+	 * @param flight - flight edge to be checked
+	 * @return true if FlightEdge is in the queue
 	 */
 	private boolean isDestinationInQueue(PriorityQueue pq, FlightEdge flight) {
 		return pq.size() > 0 && pq.get(flight.getDestination()) != null;
 	}
 	
-	/**
-	 * @param flight
-	 * @param newCost
+	/**Boolean if statement to see if the new cost is less the the current cost
+	 * @param flight - current flight object
+	 * @param newCost - new cost to check
 	 * @return
 	 */
 	private boolean isNewCostGreater(FlightEdge flight, double newCost) {
 		return flight.getDestination().getCost() > newCost;
 	}
+	
+	/**
+	 * Builds a BestPath Object from a start AirportVertex and a goal AirportVertex
+	 * @param start - AirportVertex position to begin with
+	 * @param goal - AirportVertex position to end at
+	 * @return best -  BestPath string array of airports to get from start to goal
+	 */
 	
 	private BestPath buildPath(AirportVertex start, AirportVertex goal) {
 		
@@ -311,6 +332,10 @@ public class NetworkGraph {
 		return best;
 	}
 	
+	/**
+	 * Resets all Airports back to unvisited, cost to max value and previous to null.
+	 */
+	
 	private void resetAirports() {
 		for(AirportVertex airport : airportGraph) {
 			airport.setPrevious(null);
@@ -318,6 +343,13 @@ public class NetworkGraph {
 			airport.setCost(Double.MAX_VALUE);
 		}
 	}
+	
+	/**
+	 * Switch that takes in a flight and the flight criteria and returns the desired values
+	 * @param flight - specified flight
+	 * @param criteria - data member wanted of flight
+	 * @return double - desired data member's value
+	 */
 	
 	private double flightCost(FlightEdge flight, FlightCriteria criteria) {
 		switch(criteria) {
