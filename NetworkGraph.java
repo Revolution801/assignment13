@@ -155,9 +155,16 @@ public class NetworkGraph {
 	 */
 	public BestPath getBestPath(String origin, String destination, FlightCriteria criteria) {
 		
+		int startIndex = airportGraph.indexOf(new AirportVertex(origin));
+		int goalIndex = airportGraph.indexOf(new AirportVertex(destination));
+		
+		if(startIndex == -1 || goalIndex == -1){
+			return new BestPath();
+		}
+		
 		PriorityQueue pq = new PriorityQueue();
-		AirportVertex start = airportGraph.get(airportGraph.indexOf(new AirportVertex(origin)));
-		AirportVertex goal = airportGraph.get(airportGraph.indexOf(new AirportVertex(destination)));
+		AirportVertex start = airportGraph.get(startIndex);
+		AirportVertex goal = airportGraph.get(goalIndex);
 		AirportVertex current;
 		
 		start.setCost(0);
@@ -209,8 +216,15 @@ public class NetworkGraph {
 	 */
 	public BestPath getBestPath(String origin, String destination, FlightCriteria criteria, String airliner) {
 		PriorityQueue pq = new PriorityQueue();
-		AirportVertex start = airportGraph.get(airportGraph.indexOf(new AirportVertex(origin)));
-		AirportVertex goal = airportGraph.get(airportGraph.indexOf(new AirportVertex(destination)));
+		int startIndex = airportGraph.indexOf(new AirportVertex(origin));
+		int goalIndex = airportGraph.indexOf(new AirportVertex(destination));
+		
+		if(startIndex == -1 || goalIndex == -1){
+			return new BestPath();
+		}
+		
+		AirportVertex start = airportGraph.get(startIndex);
+		AirportVertex goal = airportGraph.get(goalIndex);
 		AirportVertex current;
 		
 		start.setCost(0);
