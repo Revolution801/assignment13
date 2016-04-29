@@ -9,12 +9,12 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 @SuppressWarnings("unchecked")
-public class ChainingHashTable <T> implements Set<T> {
-
+public class ChainingHashTable<T> implements Set<T> {
+	
 	protected LinkedList<T>[] storage;
 	protected int size, capacity;
 	protected final int MAXLOAD = 10;
-
+	
 	/**
 	 * Constructor for ChainingHashTable
 	 * 
@@ -27,12 +27,12 @@ public class ChainingHashTable <T> implements Set<T> {
 		this.capacity = capacity;
 		// Initialize all LinkedLists to not be null
 		storage = (LinkedList<T>[]) new LinkedList[capacity];
-		for (int i = 0; i < capacity; i++) {
+		for(int i = 0; i < capacity; i++) {
 			storage[i] = new LinkedList<T>();
 		}
 		size = 0;
 	}
-
+	
 	/**
 	 * Ensures that this set contains the specified item.
 	 * 
@@ -44,23 +44,23 @@ public class ChainingHashTable <T> implements Set<T> {
 	 */
 	@Override
 	public boolean add(T item) {
-		if (item == null) {
+		if(item == null) {
 			return false;
 		}
-
+		
 		int index = item.hashCode() % capacity;
-		if (!contains(item)) {
-			if ((double) (size + 1) / capacity >= MAXLOAD) {
+		if(!contains(item)) {
+			if((double) (size + 1) / capacity >= MAXLOAD) {
 				reHash();
 			}
 			storage[index].add(item);
 			size++;
 			return true;
 		}
-
+		
 		return false;
 	}
-
+	
 	/**
 	 * Ensures that this set contains all items in the specified collection.
 	 * 
@@ -74,15 +74,15 @@ public class ChainingHashTable <T> implements Set<T> {
 	@Override
 	public boolean addAll(Collection<? extends T> items) {
 		boolean hasChanged = false;
-
-		for (T element : items) {
-			if (add(element)) {
+		
+		for(T element : items) {
+			if(add(element)) {
 				hasChanged = true;
 			}
 		}
 		return hasChanged;
 	}
-
+	
 	/**
 	 * Removes all items from this set. The set will be empty after this method
 	 * call.
@@ -93,7 +93,7 @@ public class ChainingHashTable <T> implements Set<T> {
 		capacity = 10;
 		storage = (LinkedList<T>[]) new LinkedList[0];
 	}
-
+	
 	/**
 	 * Determines if there is an item in this set that is equal to the specified
 	 * item.
@@ -105,21 +105,21 @@ public class ChainingHashTable <T> implements Set<T> {
 	 */
 	@Override
 	public boolean contains(T item) {
-		if (item == null) {
+		if(item == null) {
 			return false;
 		}
-
+		
 		int index = item.hashCode() % capacity;
-
-		for (T element : storage[index]) {
-			if (item.equals(element)) {
+		
+		for(T element : storage[index]) {
+			if(item.equals(element)) {
 				return true;
 			}
 		}
-
+		
 		return false;
 	}
-
+	
 	/**
 	 * Determines if for each item in the specified collection, there is an item
 	 * in this set that is equal to it.
@@ -131,14 +131,14 @@ public class ChainingHashTable <T> implements Set<T> {
 	 */
 	@Override
 	public boolean containsAll(Collection<? extends T> items) {
-		for (T element : items) {
-			if (!contains(element)) {
+		for(T element : items) {
+			if(!contains(element)) {
 				return false;
 			}
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Returns true if this set contains no items.
 	 */
@@ -146,7 +146,7 @@ public class ChainingHashTable <T> implements Set<T> {
 	public boolean isEmpty() {
 		return size == 0;
 	}
-
+	
 	/**
 	 * Returns the number of items in this set.
 	 */
@@ -154,7 +154,7 @@ public class ChainingHashTable <T> implements Set<T> {
 	public int size() {
 		return size;
 	}
-
+	
 	/**
 	 * Returns the number of collisions in the set.
 	 * 
@@ -162,14 +162,14 @@ public class ChainingHashTable <T> implements Set<T> {
 	 */
 	public int getCollisionCount() {
 		int collisionCount = 0;
-		for (int idx = 0; idx < storage.length; idx++) {
-			if (storage[idx].size() > 1) {
+		for(int idx = 0; idx < storage.length; idx++) {
+			if(storage[idx].size() > 1) {
 				collisionCount += storage[idx].size() - 1;
 			}
 		}
 		return collisionCount;
 	}
-
+	
 	/**
 	 * ReHashes the hash table to double the capacity.
 	 */
@@ -178,13 +178,11 @@ public class ChainingHashTable <T> implements Set<T> {
 		capacity *= 2;
 		LinkedList<T>[] temp = storage;
 		storage = (LinkedList<T>[]) new LinkedList[capacity];
-		for (int i = 0; i < capacity; i++) {
+		for(int i = 0; i < capacity; i++) {
 			storage[i] = new LinkedList<T>();
 		}
-		for (LinkedList<T> element : temp) {
+		for(LinkedList<T> element : temp) {
 			addAll(element);
 		}
 	}
-	
-	
 }

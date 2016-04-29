@@ -99,7 +99,7 @@ public class NetworkGraph {
 				
 				// Create new destination vertex
 				AirportVertex newDestination = new AirportVertex(destination);
-
+				
 				// Only add the airport to the graph if it doesn't already exist
 				if(!airportGraph.contains(newDestination)) {
 					airportGraph.add(newDestination);
@@ -156,15 +156,17 @@ public class NetworkGraph {
 	 *         destination, and everything in between.
 	 */
 	public BestPath getBestPath(String origin, String destination, FlightCriteria criteria) {
+		PriorityQueue pq = new PriorityQueue();
 		
+		// Get the index of the airports
 		int startIndex = airportGraph.indexOf(new AirportVertex(origin));
 		int goalIndex = airportGraph.indexOf(new AirportVertex(destination));
 		
-		if(startIndex == -1 || goalIndex == -1){
+		// If the index is -1 airport doesn't exist in the graph
+		if(startIndex == -1 || goalIndex == -1) {
 			return new BestPath();
 		}
 		
-		PriorityQueue pq = new PriorityQueue();
 		AirportVertex start = airportGraph.get(startIndex);
 		AirportVertex goal = airportGraph.get(goalIndex);
 		AirportVertex current;
@@ -181,8 +183,9 @@ public class NetworkGraph {
 			
 			current.setAsVisited();
 			
+			// Iterate through every flight departing from the current airport
 			for(FlightEdge flight : current.getAllFlights()) {
-				newCostAndAddToQueueIfNotVisited(criteria, pq, flight);
+				getNewCostAndAddToQueueIfNotVisited(criteria, pq, flight);
 			}
 			
 		} while(pq.size() > 0);
@@ -218,10 +221,13 @@ public class NetworkGraph {
 	 */
 	public BestPath getBestPath(String origin, String destination, FlightCriteria criteria, String airliner) {
 		PriorityQueue pq = new PriorityQueue();
+		
+		// Get the index of the airports
 		int startIndex = airportGraph.indexOf(new AirportVertex(origin));
 		int goalIndex = airportGraph.indexOf(new AirportVertex(destination));
 		
-		if(startIndex == -1 || goalIndex == -1){
+		// If the index is -1 airport doesn't exist in the graph
+		if(startIndex == -1 || goalIndex == -1) {
 			return new BestPath();
 		}
 		
@@ -241,8 +247,10 @@ public class NetworkGraph {
 			
 			current.setAsVisited();
 			
+			// Only iterate through departing flights from current airport
+			// provided by the specified carrier
 			for(FlightEdge flight : current.getAllFlightsCarrierSpecific(airliner)) {
-				newCostAndAddToQueueIfNotVisited(criteria, pq, flight);
+				getNewCostAndAddToQueueIfNotVisited(criteria, pq, flight);
 			}
 			
 		} while(pq.size() > 0);
@@ -253,18 +261,21 @@ public class NetworkGraph {
 	/**
 	 * This method checks if the current flight has been visited. If not, it
 	 * checks if the new cost is cheaper than the current cost to the
-	 * destination. If so, it removes that item from the queue and than updates
-	 * its cost.
+	 * destination. If so, it removes that item from the queue, updates its
+	 * cost, and adds it to the queue.
 	 * 
 	 * @param criteria
 	 * @param pq
 	 * @param flight
 	 */
-	private void newCostAndAddToQueueIfNotVisited(FlightCriteria criteria, PriorityQueue pq, FlightEdge flight) {
+	private void getNewCostAndAddToQueueIfNotVisited(FlightCriteria criteria, PriorityQueue pq, FlightEdge flight) {
 		if(!flight.getDestination().isVisited()) {
+			
 			if(flightCost(flight, criteria) != -1) {
 				double newCost = flight.getOrigin().getCost() + flightCost(flight, criteria);
+				
 				if(isNewCostGreater(flight, newCost)) {
+					
 					if(isDestinationInQueue(pq, flight)) {
 						pq.remove(pq.indexOf(flight.getDestination()));
 					}
@@ -277,18 +288,26 @@ public class NetworkGraph {
 		}
 	}
 	
-	/**Boolean if statement to check if FlightEdge is in the priority queue
-	 * @param pq - priority queue
-	 * @param flight - flight edge to be checked
+	/**
+	 * Boolean if statement to check if FlightEdge is in the priority queue
+	 * 
+	 * @param pq
+	 *            - priority queue
+	 * @param flight
+	 *            - flight edge to be checked
 	 * @return true if FlightEdge is in the queue
 	 */
 	private boolean isDestinationInQueue(PriorityQueue pq, FlightEdge flight) {
 		return pq.size() > 0 && pq.get(flight.getDestination()) != null;
 	}
 	
-	/**Boolean if statement to see if the new cost is less the the current cost
-	 * @param flight - current flight object
-	 * @param newCost - new cost to check
+	/**
+	 * Boolean if statement to see if the new cost is less the the current cost
+	 * 
+	 * @param flight
+	 *            - current flight object
+	 * @param newCost
+	 *            - new cost to check
 	 * @return
 	 */
 	private boolean isNewCostGreater(FlightEdge flight, double newCost) {
@@ -296,12 +315,16 @@ public class NetworkGraph {
 	}
 	
 	/**
-	 * Builds a BestPath Object from a start AirportVertex and a goal AirportVertex
-	 * @param start - AirportVertex position to begin with
-	 * @param goal - AirportVertex position to end at
-	 * @return best -  BestPath string array of airports to get from start to goal
+	 * Builds a BestPath Object from a start AirportVertex and a goal
+	 * AirportVertex
+	 * 
+	 * @param start
+	 *            - AirportVertex position to begin with
+	 * @param goal
+	 *            - AirportVertex position to end at
+	 * @return best - BestPath string array of airports to get from start to
+	 *         goal
 	 */
-	
 	private BestPath buildPath(AirportVertex start, AirportVertex goal) {
 		
 		LinkedList<String> link = new LinkedList<>();
@@ -333,9 +356,9 @@ public class NetworkGraph {
 	}
 	
 	/**
-	 * Resets all Airports back to unvisited, cost to max value and previous to null.
+	 * Resets all Airports back to unvisited, cost to max value and previous to
+	 * null.
 	 */
-	
 	private void resetAirports() {
 		for(AirportVertex airport : airportGraph) {
 			airport.setPrevious(null);
@@ -345,12 +368,15 @@ public class NetworkGraph {
 	}
 	
 	/**
-	 * Switch that takes in a flight and the flight criteria and returns the desired values
-	 * @param flight - specified flight
-	 * @param criteria - data member wanted of flight
+	 * Switch that takes in a flight and the flight criteria and returns the
+	 * desired values
+	 * 
+	 * @param flight
+	 *            - specified flight
+	 * @param criteria
+	 *            - data member wanted of flight
 	 * @return double - desired data member's value
 	 */
-	
 	private double flightCost(FlightEdge flight, FlightCriteria criteria) {
 		switch(criteria) {
 			case COST:
@@ -366,5 +392,4 @@ public class NetworkGraph {
 		}
 		return 0;
 	}
-	
 }

@@ -59,7 +59,7 @@ public class FlightEdge {
 		}
 		
 		// If any of the following data is negative, set the value to -1 to
-		// catch in NetworkGraph
+		// signal to ignore the flight in NetworkGraph
 		if(delay >= 0) {
 			averageDelay = ((averageDelay * numDelay) + delay) / (++numDelay);
 		} else {
